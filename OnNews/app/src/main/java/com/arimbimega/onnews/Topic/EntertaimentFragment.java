@@ -2,13 +2,29 @@ package com.arimbimega.onnews.Topic;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arimbimega.onnews.Adapter.EntertaimentAdapter;
+import com.arimbimega.onnews.Model.Articles;
+import com.arimbimega.onnews.Model.EntModel;
 import com.arimbimega.onnews.R;
+import com.arimbimega.onnews.Retrofit.APIService;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +32,9 @@ import com.arimbimega.onnews.R;
  * create an instance of this fragment.
  */
 public class EntertaimentFragment extends Fragment {
+
+    private RecyclerView mRecyclerView;
+    private EntertaimentAdapter entertaimentAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,6 +80,38 @@ public class EntertaimentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_entertaiment, container, false);
+        View view = inflater.inflate(R.layout.fragment_entertaiment, container, false);
+        mRecyclerView = view.findViewById(R.id.rv_entertaiment);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        getEntModel();
+    }
+
+    private void getEntModel(){
+        APIService.endPoint().getEntModel()
+                .enqueue(new Callback<EntModel>() {
+                    @Override
+                    public void onResponse(Call<EntModel> call, Response<EntModel> response) {
+                        if (response.isSuccessful()){
+                            ArrayList<Articles> articlesArrayList = response.body().getArticlesArrayList();
+                            entertaimentAdapter = new EntertaimentAdapter(articlesArrayList);
+                            entertaimentAdapter.notifyDataSetChanged();
+                            mRecyclerView.setAdapter(entertaimentAdapter);
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<EntModel> call, Throwable t) {
+
+                    }
+                });
     }
 }
