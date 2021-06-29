@@ -1,5 +1,6 @@
 package com.arimbimega.onnews.Topic;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.arimbimega.onnews.Model.Articles;
 import com.arimbimega.onnews.Model.SportModel;
 import com.arimbimega.onnews.R;
 import com.arimbimega.onnews.Retrofit.APIService;
+import com.arimbimega.onnews.Webview.DetailNewsActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -88,6 +91,14 @@ public class SportFragment extends Fragment {
         return view;
     }
 
+    private void showSelectedItem (Articles articles){
+        Intent intent = new Intent(getActivity(), DetailNewsActivity.class);
+        intent.putExtra("articlesArrayList", articles);
+        Log.d("cek", "list terkirim" + intent);
+        getActivity().startActivity(intent);
+
+    }
+
     @Override
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -105,6 +116,13 @@ public class SportFragment extends Fragment {
                             sportAdapter = new SportAdapter(articlesArrayList);
                             sportAdapter.notifyDataSetChanged();
                             mRecyclerView.setAdapter(sportAdapter);
+
+                            sportAdapter.setOnItemClickCallback(new SportAdapter.OnItemClickCallback() {
+                                @Override
+                                public void onItemClicked(Articles data) {
+                                    showSelectedItem(data);
+                                }
+                            });
                         }
 
                     }

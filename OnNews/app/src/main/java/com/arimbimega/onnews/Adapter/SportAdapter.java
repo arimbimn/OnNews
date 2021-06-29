@@ -22,6 +22,12 @@ public class SportAdapter extends RecyclerView.Adapter<SportAdapter.ListViewHold
 
     private ArrayList<Articles> articlesArrayList;
 
+    private OnItemClickCallback onItemClickCallback;
+
+    public void setOnItemClickCallback(OnItemClickCallback onItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback;
+    }
+
     public SportAdapter(ArrayList<Articles> articlesArrayList) {
         this.articlesArrayList = articlesArrayList;
     }
@@ -46,6 +52,12 @@ public class SportAdapter extends RecyclerView.Adapter<SportAdapter.ListViewHold
                 .into(holder.imgItemSport);
 
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickCallback.onItemClicked(articlesArrayList.get(holder.getBindingAdapterPosition()));
+            }
+        });
     }
 
     @Override
@@ -66,5 +78,9 @@ public class SportAdapter extends RecyclerView.Adapter<SportAdapter.ListViewHold
             imgItemSport = itemView.findViewById(R.id.img_item);
 
         }
+    }
+
+    public interface OnItemClickCallback {
+        void onItemClicked(Articles data);
     }
 }
